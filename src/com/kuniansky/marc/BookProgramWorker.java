@@ -42,7 +42,7 @@ public class BookProgramWorker
 	 */
 	private void methodTester()
 	{ //Begin methodTester
-		BookObject testBook = new BookObject("Name", "Author", 1234567);
+		BookObject testBook = new BookObject("Name", "Author", 321, "Marc");
 		DatabaseManager dbman = new DatabaseManager("localhost/books_database", "root", "3052809");
 		dbman.dbInsertOneBook(testBook);
 	} //End methodTester

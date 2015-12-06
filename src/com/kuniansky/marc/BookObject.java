@@ -307,7 +307,7 @@ public class BookObject
 	 * Gets the name of the name of the owner of the book.
 	 * @return a String, the name of the owner of the book
 	 */
-	public String getOwner() throws CustomException
+	public String getOwner()
 	{ //Begin getOwner
 			return owner;
 	} //End getOwner
@@ -316,7 +316,7 @@ public class BookObject
 	 * Gets the date on which the book was purchased.
 	 * @return a Date, the date on which the book was purchased
 	 */
-	public Date getPurchaseDate() throws CustomException
+	public Date getPurchaseDate()
 	{ //Begin getPurchaseDate
 			return purchaseDate;
 	} //End getPurchaseDate
