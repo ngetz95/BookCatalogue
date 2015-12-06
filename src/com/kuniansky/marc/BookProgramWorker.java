@@ -19,6 +19,8 @@
  */
 package com.kuniansky.marc;
 
+import java.util.ArrayList;
+
 /**
  * This class handles all of the important functions behind the running of the program.
  * @author Marc Kuniansky
@@ -43,7 +45,13 @@ public class BookProgramWorker
 	private void methodTester()
 	{ //Begin methodTester
 		BookObject testBook = new BookObject("Name", "Author", 321, "Marc");
+		BookObject testBook2 = new BookObject("TestName", "Noone Wrote This", 456, "Marc");
+		BookObject testBook3 = new BookObject ("Fuck this book", "Who cares about it?", 789, "Marc");
 		DatabaseManager dbman = new DatabaseManager("localhost/books_database", "root", "3052809");
-		dbman.dbInsertOneBook(testBook);
+		dbman.dbInsertOneBook(testBook3);
+		ArrayList<BookObject> bookList = new ArrayList<BookObject>();
+		bookList.add(testBook2);
+		bookList.add(testBook);
+		dbman.dbInsertManyBooks(bookList);
 	} //End methodTester
 } //End class
