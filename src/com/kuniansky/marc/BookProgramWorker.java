@@ -44,11 +44,12 @@ public class BookProgramWorker
 	 */
 	private void methodTester()
 	{ //Begin methodTester
-		BookObject testBook = new BookObject("Name", "Author", 321, "Marc");
-		BookObject testBook2 = new BookObject("TestName", "Noone Wrote This", 456, "Marc");
-		BookObject testBook3 = new BookObject ("Fuck this book", "Who cares about it?", 789, "Marc");
+		BookObject testBook = new BookObject("Name", "Author", 32145, "Marc");
+		BookObject testBook2 = new BookObject("TestName", "Noone Wrote This", 456798, "Marc");
+		BookObject testBook3 = new BookObject ("Fuck this book", "Who cares about it?", 78919850, "Marc");
+		
 		DatabaseManager dbman = new DatabaseManager("localhost/books_database", "root", "3052809");
-		dbman.dbInsertOneBook(testBook3);
+		//dbman.dbInsertOneBook(testBook3);
 		ArrayList<BookObject> bookList = new ArrayList<BookObject>();
 		bookList.add(testBook2);
 		bookList.add(testBook);

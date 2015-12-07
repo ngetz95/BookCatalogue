@@ -22,6 +22,10 @@
  * 											Refactoring this part of the code will allow me to more easily
  * 											implement a menthod which takes several BookObjects at once and
  * 											injects them all into the database.
+ * 
+ * December 6, 2015 PM	Marc Kuniansky		Added the dbInsertManyBooks method, which takes an ArrayList of
+ * 											book objects as a parameter and inserts all of the books in the
+ * 											list into the database.
  */
 package com.kuniansky.marc;
 
@@ -34,13 +38,13 @@ import oracle.jdbc.driver.*;
  * @author Marc Kuniansky
  *
  */
-public class DatabaseManager 
+public class DatabaseManagerAddNewBook 
 { //Begin class
 	//Global variables
 	private static String url;
 	private static String user;
 	private static String pass;
-	
+	private Connection conn;
 	//Constructors
 	
 	/**
@@ -49,7 +53,7 @@ public class DatabaseManager
 	 * @param username the username needed to access the database
 	 * @param password the password needed to access the database
 	 */
-	public DatabaseManager(String URL, String username, String password)
+	public DatabaseManagerAddNewBook(String URL, String username, String password)
 	{ //Begin constructor with 3 variables
 		//Initialize instance variables
 		url = URL;
@@ -69,10 +73,6 @@ public class DatabaseManager
 		final String DB_URL = "jdbc:mysql://"+url;
 		Debug.println(DB_URL);
 		
-		//Create variables for the connection and the statement to be executed
-		Connection conn = null;
-		Statement statement = null;
-		
 		//Try statement, need to catch a bunch of exceptions
 		try
 		{ //Begin try
@@ -93,28 +93,18 @@ public class DatabaseManager
 		    //Now to insert the BookObject into the database
 		    //Debug line
 		    Debug.println("Inserting records into the table...");
-
-		    //Create a statement with the connection
-		    statement = conn.createStatement();
 		    
 		    //There are three tables in the database that need to have data added to them:
 		    //name_list, book_info, and loan_info. Each table has a private method in this class
-		    //which builds the SQL statements needed to add the required data to each table.
-		    
+		    //which inserts the required data to each table.
 		    //First, insert values into the name_list table, 
-		    String sql = this.buildNameListSQL(theBook);
-		    Debug.println(sql);
-		    statement.executeUpdate(sql);
+		    this.insertIntoNameList(theBook);
 
 		    //Next, insert to the book_info table
-		    sql = this.buildBookInfoListSQL(theBook);
-		    Debug.println(sql);
-		    statement.executeUpdate("SQL Statement: " + sql);
+		    this.insertIntoBookInfo(theBook);
 
 		    //Finally, insert to the loan_info table
-		    sql = this.buildLoanInfoSQL(theBook);
-		    Debug.println(sql);
-		    statement.executeUpdate(sql);
+		    this.insertIntoLoanInfo(theBook);
 		    
 		    //Tell the user that the insert was completed.
 		    System.out.println("Inserted records into the table.");
@@ -129,18 +119,13 @@ public class DatabaseManager
 		   }finally{
 		      //Finally block used to close resources
 		      try{
-		         if(statement!=null)
-		            conn.close();
-		      }catch(SQLException se){
-		      }//Do nothing
-		      try{
 		         if(conn!=null)
 		            conn.close();
 		      }catch(SQLException se){
 		         se.printStackTrace();
 		      }//End finally try
 		   }//End try
-		   System.out.println("Goodbye!");
+		   System.out.println("Successfully added a book to the database.");
 	} //End dbInsertOneBook
 	
 	public void dbInsertManyBooks(ArrayList<BookObject> bookList)
@@ -148,10 +133,6 @@ public class DatabaseManager
 		//Database URL
 		final String DB_URL = "jdbc:mysql://"+url;
 		Debug.println(DB_URL);
-		
-		//Create variables for the connection and the statement to be executed
-		Connection conn = null;
-		Statement statement = null;
 		
 		//Try statement, need to catch a bunch of exceptions
 		try
@@ -173,9 +154,6 @@ public class DatabaseManager
 		    //Now to insert the BookObject into the database
 		    //Debug line
 		    Debug.println("Inserting records into the table...");
-
-		    //Create a statement with the connection
-		    statement = conn.createStatement();
 		    
 		    //There are three tables in the database that need to have data added to them:
 		    //name_list, book_info, and loan_info. Each table has a private method in this class
@@ -185,24 +163,16 @@ public class DatabaseManager
 		    for(BookObject book: bookList)
 		    { //Begin for loop
 		    	//First, insert values into the name_list table, 
-			    String sql = this.buildNameListSQL(book);
-			    Debug.println(sql);
-			    statement.executeUpdate(sql);
-
+		    	this.insertIntoNameList(book);
+			    
 			    //Next, insert to the book_info table
-			    sql = this.buildBookInfoListSQL(book);
-			    Debug.println(sql);
-			    statement.executeUpdate("SQL Statement: " + sql);
-
+		    	this.insertIntoBookInfo(book);
+			    
 			    //Next, insert to the loan_info table
-			    sql = this.buildLoanInfoSQL(book);
-			    Debug.println(sql);
-			    statement.executeUpdate(sql);
+		    	this.insertIntoLoanInfo(book);
 			    
 			    //Finally, insert to the date_info table
-			    sql = this.buildDateInfoSQL(book);
-			    Debug.println(sql);
-			    statement.executeUpdate(sql);
+			    this.insertIntoDateInfo(book);
 		    } //End for loop
 		    
 		    //Tell the user that the insert was completed.
@@ -227,11 +197,6 @@ public class DatabaseManager
 		   }finally{
 		      //Finally block used to close resources
 		      try{
-		         if(statement!=null)
-		            conn.close();
-		      }catch(SQLException se){
-		      }//Do nothing
-		      try{
 		         if(conn!=null)
 		            conn.close();
 		      }catch(SQLException se){
@@ -244,46 +209,74 @@ public class DatabaseManager
 	//Helping methods
 	
 	/**
-	 * Builds the SQL statement needed to add a book to the name_list table
-	 * @param theBook a BookObject, the book beign added to the database
-	 * @return a String, the sql statement
+	 * Executes the INSERT INTO statement that adds information about the BookObject into the 
+	 * name_list table. 
+	 * @param theBook a BookObject, the book being added to the database
 	 */
-	private String buildNameListSQL(BookObject theBook)
-	{ //Begin uildNameListSQL
-		//Variables for information to be used
-	      //All BookObjects must have an isbn, name, and author. These must be present for this to work.
-	      //The name_list table only contains the isbn, name, and author of a book.
-	      int isbn = theBook.getISBN();
-	      String name = theBook.getBookName();
-	      String author = theBook.getAuthorName();
-
-	      //Now, build the SQL statement as a string. 
-	      String sqlStatement = "INSERT INTO name_list "
-	      							+ "VALUES (" + isbn + ", '" + name + "', '" + author + "');";
-	      //Return the SQL statement
-	      return sqlStatement;
-	} //End uildNameListSQL
+	private void insertIntoNameList(BookObject theBook)
+	{ //Begin insertToNameList
+		try
+		{ //Begin try
+			//Build a Prepared Statements. These are really cool, they help prevent SQL injection by
+			//Pre-loading a statement. Each question mark needs to be made something, and count up 
+			//numerically left to right from 1. 
+			//?1=isbn, ?2=name, ?3=author
+			PreparedStatement statement = conn.prepareStatement("INSERT INTO name_list"
+												+" VALUES(?,?,?);");
+			//Variables for information to be used
+		    //All BookObjects must have an isbn, name, and author. These must be present for this to work.
+		    //The name_list table only contains the isbn, name, and author of a book.
+		    int isbn = theBook.getISBN();
+		    String name = theBook.getBookName();
+		    String author = theBook.getAuthorName();
+	
+		    //Set the information needed in the PreparedStatement. 
+		    statement.setInt(1, isbn);
+		    statement.setString(2, name);
+		    statement.setString(3, author);
+		    Debug.println(statement.toString());
+		    
+		    //Execute the statement
+		    statement.executeUpdate();
+		} //End try
+		catch(SQLException se)
+		{ //Begin catch
+			se.printStackTrace();
+		} //End catch
+	} //End insertIntoNameList
 	
 	
 	/**
-	 * Builds the SQL statement needed to add information about a new book to the book_info table.
+	 * Executes the INSERT INTO statement that adds information about the BookObject into the 
+	 * book_info table.
 	 * @param theBook a BookObject, the book being added to the database
-	 * @return a String, the SQL statement to insert the book into the book_info table
 	 */
-	private String buildBookInfoListSQL(BookObject theBook)
+	private void insertIntoBookInfo(BookObject theBook)
 	{ //Begin buildBookInfoListSQL
-		//The book_info table contains the ISBN, owner, location, and times read
-		int isbn = theBook.getISBN();
-	    String owner = theBook.getOwner();
-	    String location = theBook.getLocation();
-	    int timesRead = theBook.getNumTimesRead();
-
-	    //Build the sqlStatement to be returned
-	    String sqlStatement = "INSERT INTO book_info"
-    							+ " VALUES (" + isbn + ", '" + owner + "', '" + location 
-    							+ "', " + timesRead + ");";
-	    //Return the SQL statement
-	    return sqlStatement;
+		try
+		{ //Begin try
+			//Pepared statement to be executed. 1=isbn, 2=owner, 3=location, 4=timesRead
+			PreparedStatement statement = conn.prepareStatement("INSERT INTO book_info"
+																	+" VALUES(?,?,?,?);");
+			//The book_info table contains the ISBN, owner, location, and times read
+			int isbn = theBook.getISBN();
+		    String owner = theBook.getOwner();
+		    String location = theBook.getLocation();
+		    int timesRead = theBook.getNumTimesRead();
+	
+		    statement.setInt(1, isbn);
+		    statement.setString(2, owner);
+		    statement.setString(3, location);
+		    statement.setInt(4, timesRead);
+		    Debug.println(statement.toString());
+		    
+		    //Execute the statement
+		    statement.executeUpdate();
+		} //End try
+		catch(SQLException se)
+		{ //Begin catch
+			se.printStackTrace();
+		} //End catch
 	} //End buildBookInfoListSQL
 	
 	
@@ -292,16 +285,28 @@ public class DatabaseManager
 	 * @param theBook a BookObject, the book being added to the database
 	 * @return a String, the SQL statement to insert data into the loan_info table
 	 */
-	private String buildLoanInfoSQL(BookObject theBook)
+	private void insertIntoLoanInfo(BookObject theBook)
 	{ //Begin buildLoanInfoSQL
-		//The loan_info table holds the ISBN, person loaned to, and date loaned to
-		int isbn = theBook.getISBN();
-	    String loanedTo = theBook.getPersonLoanedTo();
-
-	    String sqlStatement = "INSERT INTO loan_info "
-  								+ "VALUES (" + isbn + ", '" + loanedTo + "');";
-	    //Return the SQL statement
-	    return sqlStatement;
+		try
+		{ //Begin try statement
+			//Prepared statement to be executed. ?1=isbn, ?2=loanedTo
+			PreparedStatement statement = conn.prepareStatement("INSERT INTO loan_info"
+																+" VALUES(?,?);");
+			//The loan_info table holds the ISBN, person loaned to, and date loaned to
+			int isbn = theBook.getISBN();
+		    String loanedTo = theBook.getPersonLoanedTo();
+	
+		    //Add information to the PreparedStatement
+		    statement.setInt(1, isbn);
+		    statement.setString(2, loanedTo);
+		    
+		    //Execute the statement
+		    statement.executeUpdate();
+		} //End try statement
+		catch(SQLException se)
+		{ //Begin catch
+			se.printStackTrace();
+		} //End catch
 	} //End buildLoanInfoSQL
 	
 	/**
@@ -309,16 +314,73 @@ public class DatabaseManager
 	 * @param theBook a BookObject, the book being added to the database
 	 * @return a STring, the SQL statement for inserting into the date_info table
 	 */
-	private String buildDateInfoSQL(BookObject theBook)
+	private void insertIntoDateInfo(BookObject theBook)
 	{ //Begin buildDateIngoSQL
-		//I have been having problems with Date objects- they are different in Java and SQL. I will have to
-		//Modify this to work properly when I get them working.
-		int isbn = theBook.getISBN();
-		//After this there will be 3 date objects, when I get them working
-		
-		//Build the SQL statement
-		String sqlStatement = "INSERT INTO date_info VALUES (" + isbn + "NULL, NULL);";
-		//Return the SQL statement
-		return sqlStatement;
+		try
+		{ //Begin try
+			PreparedStatement statement = conn.prepareStatement("INSERT INTO date_info"
+								+" VALUES(?,?,?,?);");
+			//I have been having problems with Date objects- they are different in Java and SQL. I will 
+			//have to modify this to work properly when I get them working.
+			int isbn = theBook.getISBN();
+			java.util.Date datePurchased = theBook.getPurchaseDate();
+			java.util.Date dateLoanedTo = theBook.getDateLoaned();
+			java.util.Date dateLoanedFrom = theBook.getLoanedFromDate();
+			
+			//Populate the statement with nescessary information
+			statement.setInt(1, isbn);
+			//Because date objects are weird, we have to do this one conditionally. Null Dates cannot be
+			//converted, that's why this is important.
+			//These need to work in parallel, so they don't break.
+			if(datePurchased!=null)
+			{ 
+				java.sql.Date purchaseDate = this.convertUtilDateToSQLDate(datePurchased);
+				statement.setDate(2, purchaseDate);
+			}
+			else
+			{
+				statement.setDate(2,  null);
+			}
+			if(dateLoanedTo!=null)
+			{
+				java.sql.Date loanedToDate = this.convertUtilDateToSQLDate(dateLoanedTo);
+				statement.setDate(3, loanedToDate);
+			}
+			else
+			{
+				statement.setDate(3, null);
+			}
+			if(dateLoanedFrom !=null)
+			{
+				java.sql.Date loanedFromDate = this.convertUtilDateToSQLDate(dateLoanedFrom);
+				statement.setDate(4, loanedFromDate);
+			}
+			else
+			{
+				statement.setDate(4,  null);
+			}
+			
+			Debug.println(statement.toString());
+			
+			//Execute the statement
+			statement.executeUpdate();
+		} //End try
+		catch(SQLException se)
+		{ //Begin catch
+			se.printStackTrace();
+		} //End catch
 	} //End buildDateIngoSQL
+	
+	/**
+	 * Converts a java.util.Date object to a java.sql.Date object.
+	 * @param utilDate a java.util.Date, the date to be converted
+	 * @return a java.sql.Date object, the converted date
+	 */
+	private java.sql.Date convertUtilDateToSQLDate(java.util.Date utilDate)
+	{ //Begin convertUtilDateToSQLDate
+		//Convert the date passed to the method to a java.sql.Date object
+		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+		//Return the date
+		return sqlDate;
+	} //End convertUtilDateToSQLDate
 } //End class
