@@ -3,19 +3,19 @@
  * 
  * Modifications
  * Date					Name				Modifications
- * December 5, 2015		Marc Kuniansky		Implemented the class. Gave it 3 global variables- url, 
+ * December 5, 2015		Marc Kuniansky		-Implemented the class. Gave it 3 global variables- url, 
  * 											user, and pass. Implemented a constructor. 
- * 											Implemented the dbInsertOneBook method, which 
+ * 											-Implemented the dbInsertOneBook method, which 
  * 											inserts a book to the database by following these steps:
  * 											1. Connect to the database via JDBC. 2. Getting all information 
  * 											from a BookObject passed as a parameter. 3. Feed the information
  * 											from the BookObject into SQL statements with JDBC to update
  * 											the database. Remember that BookObjects must have an isbn, name,
  * 											and author.
- * 											IMPORTANT: All tables need to have the ISBN of a new book added. 
- * 											This is critical!
+ * 											-IMPORTANT: All tables need to have the ISBN of a new book added. 
+ * 											This is critical! They are relational databases.
  * 
- * December 6, 2015 AM	Marc Kuniansky		Refactored the code responsible for making the SQL statements in
+ * December 6, 2015 AM	Marc Kuniansky		-Refactored the code responsible for making the SQL statements in
  * 											the dbInsertOneBook method to 3 separate methods, one for each
  * 											table in the database. As each table requires different parts,
  * 											each SQL insert statement needs to be made separately. 
@@ -23,9 +23,14 @@
  * 											implement a menthod which takes several BookObjects at once and
  * 											injects them all into the database.
  * 
- * December 6, 2015 PM	Marc Kuniansky		Added the dbInsertManyBooks method, which takes an ArrayList of
+ * December 6, 2015 PM	Marc Kuniansky		-Added the dbInsertManyBooks method, which takes an ArrayList of
  * 											book objects as a parameter and inserts all of the books in the
  * 											list into the database.
+ * 
+ * December 8, 2015		Marc Kuniansky		-Created a new variable, DB_URL, to standardize the URL being used for each instance
+ * 											of the class. Instantiated the variable in the constructor and utilize it in the 
+ * 											dbInsertOneBook and dbInseryManyBooks methods. Removed the local variable DB_URL
+ * 											from the two methods mentioned.
  */
 package com.kuniansky.marc;
 
@@ -34,7 +39,8 @@ import java.util.ArrayList;
 
 import oracle.jdbc.driver.*;
 /**
- * Contains methods for handling all INSERT INTO calls to the server. 
+ * Contains methods for handling all INSERT INTO calls to the server. You must construct a new instance of this class for
+ * each book you want to update. 
  * @author Marc Kuniansky
  *
  */
@@ -45,6 +51,7 @@ public class DatabaseManagerAddNewBook
 	private static String user;
 	private static String pass;
 	private Connection conn;
+	private String DB_URL;
 	//Constructors
 	
 	/**
@@ -59,9 +66,10 @@ public class DatabaseManagerAddNewBook
 		url = URL;
 		user = username;
 		pass = password;
+		DB_URL = "jdbc:mysql://"+url;
 	} //End constructor with 3 variables
-
-	//Methods
+	
+	//Public Methods
 	
 	/**
 	 * Inserts a single book into the database.
@@ -69,16 +77,13 @@ public class DatabaseManagerAddNewBook
 	 */
 	public void dbInsertOneBook(BookObject theBook)
 	{ //Begin dbInsertOneBook
-		//Database URL
-		final String DB_URL = "jdbc:mysql://"+url;
-		Debug.println(DB_URL);
-		
 		//Try statement, need to catch a bunch of exceptions
 		try
 		{ //Begin try
 			//Turn on Debug statement for testing
 			Debug.turnOn();
-			
+			//Database URL
+			Debug.println(DB_URL);
 			//Tell the user that they are being connected
 		    System.out.println("Connecting to a selected database...");
 		    
@@ -127,18 +132,21 @@ public class DatabaseManagerAddNewBook
 		   }//End try
 		   System.out.println("Successfully added a book to the database.");
 	} //End dbInsertOneBook
-	
+
+	/**
+	 * Inserts an array list of books into the database. This will be useful for allowing the user to initialize the database
+	 * by inserting all of their books at the same time. 
+	 * @param bookList an ArrayList of BookObjects
+	 */
 	public void dbInsertManyBooks(ArrayList<BookObject> bookList)
 	{ //Begin dbInsertManyBooks
-		//Database URL
-		final String DB_URL = "jdbc:mysql://"+url;
+		//Turn on Debug statement for testing
+		Debug.turnOn();
 		Debug.println(DB_URL);
 		
 		//Try statement, need to catch a bunch of exceptions
 		try
 		{ //Begin try
-			//Turn on Debug statement for testing
-			Debug.turnOn();
 			
 			//Tell the user that they are being connected
 		    System.out.println("Connecting to a selected database...");
@@ -182,15 +190,6 @@ public class DatabaseManagerAddNewBook
 		catch(SQLException se){
 		      //Handle errors for JDBC
 		      se.printStackTrace();
-		      String errorString = se.toString();
-		      if(errorString.contains("Duplicate entry"))
-		      { //Begin if
-		    	  //If we get a duplicate error entry while going through the array list, remove the 
-		    	  //duplicate and any objects in the ArrayList before it (which have already been added)
-		    	  //and run the method again with the resulting array list.
-		    	  String isbnStopped = errorString.substring(18, errorString.indexOf("'")-1);
-		    	  Debug.println(isbnStopped);
-		      } //End if
 		   }catch(Exception e){
 		      //Handle errors for Class.forName
 		      e.printStackTrace();
@@ -217,7 +216,7 @@ public class DatabaseManagerAddNewBook
 	{ //Begin insertToNameList
 		try
 		{ //Begin try
-			//Build a Prepared Statements. These are really cool, they help prevent SQL injection by
+			//Build a Prepared Statement. These are really cool, they help prevent SQL injection by
 			//Pre-loading a statement. Each question mark needs to be made something, and count up 
 			//numerically left to right from 1. 
 			//?1=isbn, ?2=name, ?3=author

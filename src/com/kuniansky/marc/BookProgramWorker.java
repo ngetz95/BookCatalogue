@@ -44,15 +44,19 @@ public class BookProgramWorker
 	 */
 	private void methodTester()
 	{ //Begin methodTester
-		BookObject testBook = new BookObject("Name", "Author", 32145, "Marc");
-		BookObject testBook2 = new BookObject("TestName", "Noone Wrote This", 456798, "Marc");
-		BookObject testBook3 = new BookObject ("Fuck this book", "Who cares about it?", 78919850, "Marc");
+		BookObject testBook = new BookObject("Name", "Author", 3214, "Marc");
+		BookObject testBook2 = new BookObject("TestName", "Noone Wrote This", 45679, "Marc");
+		BookObject testBook3 = new BookObject ("Fuck this book", "Who cares about it?", 7891985, "Marc");
 		
-		DatabaseManager dbman = new DatabaseManager("localhost/books_database", "root", "3052809");
+		//DatabaseManagerAddNewBook dbman = new DatabaseManagerAddNewBook
+											//("localhost/books_database", "root", "");
 		//dbman.dbInsertOneBook(testBook3);
 		ArrayList<BookObject> bookList = new ArrayList<BookObject>();
 		bookList.add(testBook2);
 		bookList.add(testBook);
-		dbman.dbInsertManyBooks(bookList);
+		//dbman.dbInsertManyBooks(bookList);
+		
+		DatabaseManagerUpdateBook updateBook = new DatabaseManagerUpdateBook("localhost/books_database", "root", "", testBook);
+		updateBook.updateNameListName("I changed this name programatically.");
 	} //End methodTester
 } //End class
