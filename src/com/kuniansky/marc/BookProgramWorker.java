@@ -5,6 +5,12 @@
  * Date					Name				Modifications
  * December 1, 2015		Marc Kuniansky		Implemented the constructor with no parameters
  * 
+ * December 5, 2015		Marc Kuniansky		Implemented the methodTester method, which was made to test 
+ * 											my methods. Modified the constructor to call methodTester when
+ * 											used. The methodTester method will be constantly modified, and
+ * 											explaining it here won't be helpful. It will not be in the final 
+ * 											product.
+ * 
  * Future stuff:
  * This hasn't actually been implemented yet. This class should be the one which makes everything work.
  * Think of this like the main method- lots of progressive steps which make the program run. 
@@ -12,6 +18,8 @@
  * everything, I think. I could be wrong, though.
  */
 package com.kuniansky.marc;
+
+import java.util.ArrayList;
 
 /**
  * This class handles all of the important functions behind the running of the program.
@@ -27,6 +35,28 @@ public class BookProgramWorker
 	 */
 	public BookProgramWorker()
 	{ //Begin constructor with no parameters
-		//Nothing to construct yet
+		//Run a few methods when this class is constructed
+		this.methodTester();
 	} //End constructor with no parameters
+	
+	/**
+	 * A method for testing Marc's code, to make sure it all works as intended.
+	 */
+	private void methodTester()
+	{ //Begin methodTester
+		BookObject testBook = new BookObject("Name", "Author", 3214, "Marc");
+		BookObject testBook2 = new BookObject("TestName", "Noone Wrote This", 45679, "Marc");
+		BookObject testBook3 = new BookObject ("Fuck this book", "Who cares about it?", 7891985, "Marc");
+		
+		//DatabaseManagerAddNewBook dbman = new DatabaseManagerAddNewBook
+											//("localhost/books_database", "root", "");
+		//dbman.dbInsertOneBook(testBook3);
+		ArrayList<BookObject> bookList = new ArrayList<BookObject>();
+		bookList.add(testBook2);
+		bookList.add(testBook);
+		//dbman.dbInsertManyBooks(bookList);
+		
+		DatabaseManagerUpdateBook updateBook = new DatabaseManagerUpdateBook("localhost/books_database", "root", "", testBook);
+		updateBook.updateNameListName("I changed this name programatically.");
+	} //End methodTester
 } //End class

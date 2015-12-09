@@ -21,10 +21,11 @@ import java.util.Date;
 
 /**
  * A book object has the following attributes: A name, id number (hopefully the serial number) and an author 
- * will be present for all books. Books will also have an owner and purchase date. They can also have a location
- * and current holder.
+ * will be present for all books. Books will also have an owner and purchase date. They can also have a 
+ * location and current holder.
  * 
- * Constructors are available which allow you to set virtually all global variables when creating a BookObject. 
+ * Constructors are available which allow you to set virtually all global variables when creating a 
+ * BookObject. 
  * @author Marc Kuniansky
  *
  */
@@ -38,7 +39,7 @@ public class BookObject
 	//The owner of a book is the person who purchased it, and the purchase date is self explanatory
 	private String owner;
 	private Date purchaseDate;
-	//The location of a book is its location. This is highly customizable- the owner can make this whatever they want
+	//The location of a book is its location. The owner can make this whatever they want
 	private String location;
 	//The loanedTo variable is the name of a person to which a book has been loaned
 	private String loanedTo;
@@ -46,6 +47,8 @@ public class BookObject
 	private Date loanedToDate;
 	//The number of times read is the number of times a book has been read
 	private int timesRead;
+	//The dateLoanedFrom is the date on which the current holder of a book was loaned it
+	private Date loanedFromDate;
 	
 	
 	
@@ -65,20 +68,22 @@ public class BookObject
 	 */
 	//Constructors
 	/**
-	 * Constructor which allows you to set the name, author, and ISBN of a book. 
+	 * Constructor which allows you to set the name, author, and ISBN of a book. This is the most basic
+	 * constructor, used when there is not much information given about a book.
 	 * @param bookName a String, the name of the book
 	 * @param bookAuthor a String, the author of the book
 	 * @param bookISBN an int, the ISBN of the book
 	 */
-	public BookObject(String bookName, String bookAuthor, int bookISBN)
+	public BookObject(int bookISBN, String bookName, String bookAuthor)
 	{ //Begin constructor with 3 parameters
+		isbn = bookISBN;
 		name = bookName;
 		author = bookAuthor;
-		isbn = bookISBN;
 	} //End constructor with 3 parameters
 	
 	/**
-	 * Constructor which allows you to set the name, author, ISBN and owner of a book.
+	 * Constructor which allows you to set the name, author, ISBN and owner of a book. Use this constructor
+	 * for most all BookObjects. The owner will generally be the user.
 	 * @param bookName a String, the name of the book
 	 * @param bookAuthor a String, the author of the book
 	 * @param bookISBN an int, the ISBN of the book
@@ -94,7 +99,8 @@ public class BookObject
 	} //End constructor with 4 parameters
 	
 	/**
-	 * Constructor which allows you to set the name, author, ISBN and owner of a book.
+	 * Constructor which allows you to set the name, author, ISBN, owner and number of times read. Use this
+	 * when the user indicates that they have read the book a certain number of times.
 	 * @param bookName a String, the name of the book
 	 * @param bookAuthor a String, the author of the book
 	 * @param bookISBN an int, the ISBN of the book
@@ -113,6 +119,8 @@ public class BookObject
 	
 	/**
 	 * Constructor which allows you to set the name, author, ISBN, owner and purchase date of a book.
+	 * This will likely be the most used constructor of BookObjects. Use this when a user adds a newly
+	 * purchased book to their library.
 	 * @param bookName a String, the name of the book
 	 * @param bookAuthor a String, the author of the book
 	 * @param bookISBN an int, the ISBN of the book
@@ -131,6 +139,8 @@ public class BookObject
 	
 	/**
 	 * Constructor which allows you to set the name, author, ISBN, owner and current location of a book.
+	 * This will likely be used a lot. Use this constructor when the user does not know the purchase 
+	 * date of a book.
 	 * @param bookName a String, the name of the book
 	 * @param bookAuthor a String, the author of the book
 	 * @param bookISBN an int, the ISBN of the book
@@ -260,7 +270,8 @@ public class BookObject
 	 * @param dateLoaned a Date, the date on which the book was loaned to personLoanedTo
 	 */
 	public BookObject(int bookISBN, String bookName, String bookAuthor,
-					  String ownerName, Date datePurchased, String locationOfBook, String personLoanedTo, Date dateLoaned)
+					  String ownerName, Date datePurchased, String locationOfBook, 
+					  String personLoanedTo, Date dateLoaned)
 	{ //Begin constructor with 4 parameters
 		name = bookName;
 		author = bookAuthor;
@@ -272,8 +283,23 @@ public class BookObject
 		loanedToDate = dateLoaned;
 	} //End constructor with 4 parameters
 	
-	
-	
+	/**
+	 * Constructor used when a book is loaned to the user. Requires the original owner, the date it was
+	 * loaned, the name of the book and the author of the book.
+	 * @param owner 			The owner of the book, the person who loaned the book to the current holder
+	 * @param loanedFromDate 	The date on which the user was given the book
+	 * @param ISBN 				The ISBN of the book
+	 * @param bookName 			The name of the book
+	 * @param bookAuthor 		The author of the book
+	 */
+	public BookObject(String ownerName, Date dateLoanedFrom, int ISBN, String bookName, String bookAuthor)
+	{ //Begin constructor
+		owner = ownerName;
+		loanedFromDate = dateLoanedFrom;
+		isbn = ISBN;
+		name = bookName;
+		author = bookAuthor;
+	} //End constructor
 	
 	//Getters for global variables
 	/**
@@ -307,7 +333,7 @@ public class BookObject
 	 * Gets the name of the name of the owner of the book.
 	 * @return a String, the name of the owner of the book
 	 */
-	public String getOwner() throws CustomException
+	public String getOwner()
 	{ //Begin getOwner
 			return owner;
 	} //End getOwner
@@ -316,7 +342,7 @@ public class BookObject
 	 * Gets the date on which the book was purchased.
 	 * @return a Date, the date on which the book was purchased
 	 */
-	public Date getPurchaseDate() throws CustomException
+	public Date getPurchaseDate()
 	{ //Begin getPurchaseDate
 			return purchaseDate;
 	} //End getPurchaseDate
@@ -357,7 +383,14 @@ public class BookObject
 		return timesRead;
 	} //End getNumTimesRead
 	
-	
+	/**
+	 * Gets the date on which the book was loaned to the user from another person.
+	 * @return a Date, the date the book was loaned to the user from another person
+	 */
+	public Date getLoanedFromDate()
+	{ //Begin getLoanedFromDate
+		return loanedFromDate;
+	} //End getLoanedFromDate
 	
 	//Setters for global variables
 	/**
@@ -440,4 +473,13 @@ public class BookObject
 	{ //Begin setNumTimesRead
 		timesRead = numTimesRead;
 	} //End setNumTimesRead
+	
+	/**
+	 * Set the dte on which a book was loaned to the user from another person
+	 * @param dateLoanedFrom a Date, the date in question
+	 */
+	public void setDateLoanedFrom(Date dateLoanedFrom)
+	{ //Begin setDateLoanedFrom
+		loanedFromDate = dateLoanedFrom;
+	} //End setDateLoanedFrom
 } //End class

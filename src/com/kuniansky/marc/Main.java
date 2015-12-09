@@ -29,7 +29,7 @@ public class Main
 	 */
 	public static void main(String[] args) 
 	{ //Begin main method
-		// TODO Auto-generated method stub
+		BookProgramWorker worker = new BookProgramWorker();
 
 	} //End main method
 } //End class
