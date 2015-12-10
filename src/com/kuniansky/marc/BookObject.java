@@ -28,7 +28,9 @@ import java.util.Date;
  */
 public class BookObject 
 { //Begin class
+	
 	//Global variables
+	
 	//All book objects MUST have a name, author, and isbn number.
 	private String name;
 	private String author;
@@ -48,22 +50,8 @@ public class BookObject
 	private Date loanedFromDate;
 	
 	
+	//Constructor
 	
-	
-	/*
-	 * Have constructors for:
-	 * name, author, isbn (required in all constructors) DONE
-	 * owner DONE
-	 * owner, purchaseDate DONE
-	 * owner, location DONE
-	 * owner, location, purchaseDate DONE
-	 * owner, loanedTo DONE
-	 * owner, loanedTo, loanedToDate DONE
-	 * owner, location, loanedTo DONE
-	 * owner, location, loanedTo, loanedToDate DONE
-	 * owner, location, purchaseDate, loanedTo, loanedToDate DONE
-	 */
-	//Constructors
 	/**
 	 * Constructor which allows you to set the name, author, and ISBN of a book. This is the most basic
 	 * constructor, used when there is not much information given about a book.
@@ -78,7 +66,11 @@ public class BookObject
 		author = bookAuthor;
 	} //End constructor with 3 parameters
 	
+	
+	
 	//Getters for global variables
+	
+	
 	/**
 	 * Gets the name of the book
 	 * @return a String, the name of the book
@@ -169,7 +161,11 @@ public class BookObject
 		return loanedFromDate;
 	} //End getLoanedFromDate
 	
+	
+	
 	//Setters for global variables
+	
+	
 	/**
 	 * Sets the name of the book to the desired name
 	 * @param bookName a String, the desired name
@@ -252,7 +248,7 @@ public class BookObject
 	} //End setNumTimesRead
 	
 	/**
-	 * Set the dte on which a book was loaned to the user from another person
+	 * Set the date on which a book was loaned to the user from another person
 	 * @param dateLoanedFrom a Date, the date in question
 	 */
 	public void setDateLoanedFrom(Date dateLoanedFrom)

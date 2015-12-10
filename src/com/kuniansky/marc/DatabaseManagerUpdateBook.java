@@ -14,12 +14,15 @@
  * 		in the name_list table.
  * 		- Implemented the updateNameListAuthor method, which uses PreparedStatements to execute the SQL code to update the author of
  * 		a book in the name_list table.
- * 		- Implemented the closeConnection method, which closes the connection when the 
+ * 		- Implemented the closeConnection method, which closes the connection when the program is done making calls. 
  * 
  * December 9, 2015 	Marc Kuniansky
  * 		Modifications Made:
  * 		- Implemented the updateBookInfoLocation method, which uses prepared statements to execute the SQL code to update the
  * 		location of a book
+ * 		- Implemented the updateBookInfoTimesRead, updateLoanInfoLoanedTo, updateDateInfoPurchaseDate, updateDateInfoLoanedToDate,
+ * 		updateDateInfoLoanedFromDate, which use PreparedStatements to execute SQL code to update information in several tables 
+ * 		in the database. 
  */
 package com.kuniansky.marc;
 
@@ -108,28 +111,8 @@ public class DatabaseManagerUpdateBook
 			sq.printStackTrace();
 		} //End catch
 	} //End closeConnection
-	//Methods
 	
-	/*
-	 * The ISBN of a book cannot be updated at this time. 
-	 * Need methods to update the following fields in each table:
-	 * name_list
-	 * 		name X
-	 * 		author X
-	 * 
-	 * book_info
-	 * 		owner X
-	 * 		location X
-	 * 		times_read X
-	 * 
-	 * loan_info
-	 * 		loaned_to X
-	 * 
-	 * date_info
-	 * 		purchase_date X
-	 * 		loaned_to_date
-	 * 		loaned_from_date
-	 */
+	//Methods
 	
 	//Updaters for the name_list table
 	
@@ -421,6 +404,7 @@ public class DatabaseManagerUpdateBook
 											("UPDATE date_info"
 												+" SET purchase_date=?"
 												+" WHERE isbn=?");
+			//Need to convert to a sql date to insert into the database
 			java.sql.Date sqlDate = new java.sql.Date(desiredPurchaseDate.getTime());
 			//Set the fields in the prepared statement
 			statement.setDate(1, sqlDate);
@@ -437,7 +421,10 @@ public class DatabaseManagerUpdateBook
 		} //End catch
 	} //End updateDateInfoPurchaseDate
 
-	
+	/**
+	 * Updates the date the book was loaned to in the date_info table
+	 * @param desiredLoanedToDate a Date, the date on which the book was loaned
+	 */
 	public void updateDateInfoLoanedToDate(Date desiredLoanedToDate)
 	{ //Begin updateDateInfoLoanedToDate
 		//Database URL
@@ -454,11 +441,12 @@ public class DatabaseManagerUpdateBook
 			//Build a Prepared Statement. These are really cool, they help prevent SQL injection by
 			//Pre-loading a statement. Each question mark needs to be made something, and count up 
 			//numerically left to right from 1. 
-			//?1=the new purchase date of the book, ?2=ISBN
+			//?1=the new date on which the book was loaned to the user, ?2=ISBN
 			PreparedStatement statement = conn.prepareStatement
 											("UPDATE date_info"
-												+" SET purchase_date=?"
+												+" SET loaned_to_date=?"
 												+" WHERE isbn=?");
+			//Need to convert the date to a sql date.
 			java.sql.Date sqlDate = new java.sql.Date(desiredLoanedToDate.getTime());
 			//Set the fields in the prepared statement
 			statement.setDate(1, sqlDate);
@@ -474,4 +462,48 @@ public class DatabaseManagerUpdateBook
 			sq.printStackTrace();
 		} //End catch
 	} //End updateDateInfoLoanedToDate
+	
+	/**
+	 * Updates the date on which a book was loaned to another person by the user in the date_info table.
+	 * @param desiredLoanedFromDate a Date, the date on which the book was loaned by the user to another person.
+	 */
+	public void updateDateInfoLoanedFromDate(Date desiredLoanedFromDate)
+	{ //Begin updateDateInfoLoanedFromDate
+		//Database URL
+		Debug.println(url);
+		
+		//Get the needed information for updating the table
+		//First need the ISBN, to tell SQL which entry to update
+		int ISBN = theBook.getISBN();
+
+		try
+		{ //Begin try
+			//Debug line
+			Debug.println("Updating record in the table...");
+			//Build a Prepared Statement. These are really cool, they help prevent SQL injection by
+			//Pre-loading a statement. Each question mark needs to be made something, and count up 
+			//numerically left to right from 1. 
+			//?1=the new date on which the book was loaned to another person from the user, ?2=ISBN
+			PreparedStatement statement = conn.prepareStatement
+											("UPDATE date_info"
+												+" SET loaned_from_date=?"
+												+" WHERE isbn=?");
+			//Need to convert the date to a sql date.
+			java.sql.Date sqlDate = new java.sql.Date(desiredLoanedFromDate.getTime());
+			//Set the fields in the prepared statement
+			statement.setDate(1, sqlDate);
+			statement.setInt(2, ISBN);
+	    
+			//Execute the SQL statement
+			statement.executeUpdate();
+			//Tell the user that the insert was completed.
+			System.out.println("Updated record in the name_list table.");
+		} //End try
+		catch(SQLException sq)
+		{ //Begin catch
+			sq.printStackTrace();
+		} //End catch
+	} //End updateDateInfoLoanedFromDate
+	
+	
 } //End class
