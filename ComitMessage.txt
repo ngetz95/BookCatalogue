@@ -1,0 +1,17 @@
+Updated the following classes:
+
+DatabaseManagetUpdateBookClass:
+
+- Implemented the updateBookInfoLocation method, which uses 
+prepared statements to execute the SQL code to update the
+location of a book
+ - Implemented the updateBookInfoTimesRead, updateLoanInfoLoanedTo, 
+updateDateInfoPurchaseDate, updateDateInfoLoanedToDate,
+ updateDateInfoLoanedFromDate, which use PreparedStatements 
+to execute SQL code to update information in several tables 
+in the database.
+
+BookObject class:
+Removed all constructors except for the most basic, which allows you to set
+the ISBN, name, and author of a book. To update other information about the book,
+use getters and setters. 

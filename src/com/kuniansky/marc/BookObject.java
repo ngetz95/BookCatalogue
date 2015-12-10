@@ -10,10 +10,9 @@
  * 											does not need a loanedToDate without a person who the book was loaned to.
  * 											Basic implementation of getters and setters for all global variables.
  * 
- * Future stuff:
- * Right now this is a bit of a mess- we need to streamline the constructors so there aren't a zillion constructors. 
- * All of the getters and setters are all ready. 
- * Maybe the getters should throw custom exceptions if there is no value set for the variable being requested?
+ * December 9, 2015		Marc Kuniansky		Removed all constructors except for the most basic, which allows you to set
+ * 											the ISBN, name, and author of a book. To update other information about the book,
+ * 											use getters and setters. 
  */
 package com.kuniansky.marc;
 
@@ -21,261 +20,57 @@ import java.util.Date;
 
 /**
  * A book object has the following attributes: A name, id number (hopefully the serial number) and an author 
- * will be present for all books. Books will also have an owner and purchase date. They can also have a location
- * and current holder.
+ * will be present for all books. Books will also have an owner and purchase date. They can also have a 
+ * location and current holder.
  * 
- * Constructors are available which allow you to set virtually all global variables when creating a BookObject. 
  * @author Marc Kuniansky
  *
  */
 public class BookObject 
 { //Begin class
+	
 	//Global variables
+	
 	//All book objects MUST have a name, author, and isbn number.
 	private String name;
 	private String author;
 	private int isbn;
 	//The owner of a book is the person who purchased it, and the purchase date is self explanatory
 	private String owner;
-	private Date purchaseDate;
-	//The location of a book is its location. This is highly customizable- the owner can make this whatever they want
+	private java.util.Date purchaseDate;
+	//The location of a book is its location. The owner can make this whatever they want
 	private String location;
 	//The loanedTo variable is the name of a person to which a book has been loaned
 	private String loanedTo;
 	//The loanedToDate is the date on which the book was loaned to the person loanedTo
-	private Date loanedToDate;
+	private java.util.Date loanedToDate;
 	//The number of times read is the number of times a book has been read
 	private int timesRead;
+	//The dateLoanedFrom is the date on which the current holder of a book was loaned it
+	private java.util.Date loanedFromDate;
 	
 	
+	//Constructor
 	
-	
-	/*
-	 * Have constructors for:
-	 * name, author, isbn (required in all constructors) DONE
-	 * owner DONE
-	 * owner, purchaseDate DONE
-	 * owner, location DONE
-	 * owner, location, purchaseDate DONE
-	 * owner, loanedTo DONE
-	 * owner, loanedTo, loanedToDate DONE
-	 * owner, location, loanedTo DONE
-	 * owner, location, loanedTo, loanedToDate DONE
-	 * owner, location, purchaseDate, loanedTo, loanedToDate DONE
-	 */
-	//Constructors
 	/**
-	 * Constructor which allows you to set the name, author, and ISBN of a book. 
+	 * Constructor which allows you to set the name, author, and ISBN of a book. This is the most basic
+	 * constructor, used when there is not much information given about a book.
 	 * @param bookName a String, the name of the book
 	 * @param bookAuthor a String, the author of the book
 	 * @param bookISBN an int, the ISBN of the book
 	 */
-	public BookObject(String bookName, String bookAuthor, int bookISBN)
+	public BookObject(int bookISBN, String bookName, String bookAuthor)
 	{ //Begin constructor with 3 parameters
+		isbn = bookISBN;
 		name = bookName;
 		author = bookAuthor;
-		isbn = bookISBN;
 	} //End constructor with 3 parameters
-	
-	/**
-	 * Constructor which allows you to set the name, author, ISBN and owner of a book.
-	 * @param bookName a String, the name of the book
-	 * @param bookAuthor a String, the author of the book
-	 * @param bookISBN an int, the ISBN of the book
-	 * @param ownerName a String, the name of the person or entity that owns the book
-	 */
-	public BookObject(String bookName, String bookAuthor, int bookISBN, 
-					  String ownerName)
-	{ //Begin constructor with 4 parameters
-		name = bookName;
-		author = bookAuthor;
-		isbn = bookISBN;
-		owner = ownerName;
-	} //End constructor with 4 parameters
-	
-	/**
-	 * Constructor which allows you to set the name, author, ISBN and owner of a book.
-	 * @param bookName a String, the name of the book
-	 * @param bookAuthor a String, the author of the book
-	 * @param bookISBN an int, the ISBN of the book
-	 * @param ownerName a String, the name of the person or entity that owns the book
-	 * @param numberTimesRead an int, the number of times the book has been read
-	 */
-	public BookObject(String bookName, String bookAuthor, int bookISBN,
-					  String ownerName, int numberTimesRead)
-	{ //Begin constructor with 5 parameters
-		name = bookName;
-		author = bookAuthor;
-		isbn = bookISBN;
-		owner = ownerName;
-		timesRead = numberTimesRead;
-	} //End constructor with 5 parameters
-	
-	/**
-	 * Constructor which allows you to set the name, author, ISBN, owner and purchase date of a book.
-	 * @param bookName a String, the name of the book
-	 * @param bookAuthor a String, the author of the book
-	 * @param bookISBN an int, the ISBN of the book
-	 * @param ownerName a String, the name of the person or entity that owns the book
-	 * @param datePurchased a Date, the date on which the book was purchased by the current owner
-	 */
-	public BookObject(String bookName, String bookAuthor, int bookISBN, 
-					  String ownerName, Date datePurchased)
-	{ //Begin constructor with 5 parameters
-		name = bookName;
-		author = bookAuthor;
-		isbn = bookISBN;
-		owner = ownerName;
-		purchaseDate = datePurchased;
-	} //End constructor with 5 parameters
-	
-	/**
-	 * Constructor which allows you to set the name, author, ISBN, owner and current location of a book.
-	 * @param bookName a String, the name of the book
-	 * @param bookAuthor a String, the author of the book
-	 * @param bookISBN an int, the ISBN of the book
-	 * @param ownerName a String, the name of the person or entity that owns the book
-	 * @param locationOfBook a String, the current location of the book
-	 */
-	public BookObject(String bookName, String bookAuthor, int bookISBN, 
-					  String ownerName, String locationOfBook)
-	{ //Begin constructor with 5 parameters
-		name = bookName;
-		author = bookAuthor;
-		isbn = bookISBN;
-		owner = ownerName;
-		location = locationOfBook;
-	} //End constructor with 5 parameters
-	
-	/**
-	 * Constructor which allows you to set the name, author, ISBN, owner, current location 
-	 * and purchase date of a book.
-	 * @param bookName a String, the name of the book
-	 * @param bookAuthor a String, the author of the book
-	 * @param bookISBN an int, the ISBN of the book
-	 * @param ownerName a String, the name of the person or entity that owns the book
-	 * @param locationOfBook a String, the current location of the book
-	 * @param datePurchased  a String, the date on which the book was purchased
-	 */
-	public BookObject(String bookName, String bookAuthor, int bookISBN, 
-					  String ownerName, String locationOfBook, Date datePurchased)
-	{ //Begin constructor with 6 parameters
-		name = bookName;
-		author = bookAuthor;
-		isbn = bookISBN;
-		owner = ownerName;
-		location = locationOfBook;
-		purchaseDate = datePurchased;
-	} //End constructor with 6 parameters
-	
-	/**
-	 * Constructor which allows you to set the name, author, ISBN and owner of a book.
-	 * @param bookISBN an int, the ISBN of the book
-	 * @param bookName a String, the name of the book
-	 * @param bookAuthor a String, the author of the book
-	 * @param ownerName a String, the name of the person or entity that owns the book
-	 * @param personOwnedTo a String, the name of the person or entity to whom the book has been loaned
-	 */
-	public BookObject(int bookISBN, String bookName, String bookAuthor, 
-					  String ownerName, String personLoanedTo)
-	{ //Begin constructor with 4 parameters
-		name = bookName;
-		author = bookAuthor;
-		isbn = bookISBN;
-		owner = ownerName;
-		loanedTo = personLoanedTo;
-	} //End constructor with 4 parameters
-	
-	/**
-	 * Constructor which allows you to set the name, author, ISBN and owner of a book.
-	 * @param bookISBN an int, the ISBN of the book
-	 * @param bookName a String, the name of the book
-	 * @param bookAuthor a String, the author of the book
-	 * @param ownerName a String, the name of the person or entity that owns the book
-	 * @param personLoanedTo a String, the name of the person or entity to whom the book has been loaned
-	 * @param dateLoaned a Date, the date on which the book was loaned to personLoanedTo
-	 */
-	public BookObject(int bookISBN, String bookName, String bookAuthor, 
-					  String ownerName, String personLoanedTo, Date dateLoaned)
-	{ //Begin constructor with 4 parameters
-		name = bookName;
-		author = bookAuthor;
-		isbn = bookISBN;
-		owner = ownerName;
-		loanedTo = personLoanedTo;
-		loanedToDate = dateLoaned;
-	} //End constructor with 4 parameters
-	
-	/**
-	 * Constructor which allows you to set the name, author, ISBN and owner of a book.
-	 * @param bookISBN an int, the ISBN of the book
-	 * @param bookName a String, the name of the book
-	 * @param bookAuthor a String, the author of the book
-	 * @param ownerName a String, the name of the person or entity that owns the book
-	 * @param locationOfBook a String, the current location of the book.
-	 * @param personLoanedTo a String, the name of the person or entity to whom the book has been loaned
-	 */
-	public BookObject(int bookISBN, String bookName, String bookAuthor, 
-					  String ownerName, String locationOfBook, String personLoanedTo)
-	{ //Begin constructor with 4 parameters
-		name = bookName;
-		author = bookAuthor;
-		isbn = bookISBN;
-		owner = ownerName;
-		location = locationOfBook;
-		loanedTo = personLoanedTo;
-	} //End constructor with 4 parameters
-	
-	/**
-	 * Constructor which allows you to set the name, author, ISBN and owner of a book.
-	 * @param bookISBN an int, the ISBN of the book
-	 * @param bookName a String, the name of the book
-	 * @param bookAuthor a String, the author of the book
-	 * @param ownerName a String, the name of the person or entity that owns the book
-	 * @param locationOfBook a String, the current location of the book.
-	 * @param personLoanedTo a String, the name of the person or entity to whom the book has been loaned
-	 * @param dateLoaned a Date, the date on which the book was loaned to personLoanedTo
-	 */
-	public BookObject(int bookISBN, String bookName, String bookAuthor, 
-					  String ownerName, String locationOfBook, String personLoanedTo, Date dateLoaned)
-	{ //Begin constructor with 4 parameters
-		name = bookName;
-		author = bookAuthor;
-		isbn = bookISBN;
-		owner = ownerName;
-		location = locationOfBook;
-		loanedTo = personLoanedTo;
-		loanedToDate = dateLoaned;
-	} //End constructor with 4 parameters
-	
-	/**
-	 * Constructor which allows you to set the name, author, ISBN and owner of a book.
-	 * @param bookISBN an int, the ISBN of the book
-	 * @param bookName a String, the name of the book
-	 * @param bookAuthor a String, the author of the book
-	 * @param ownerName a String, the name of the person or entity that owns the book
-	 * @param datePurchased a Date, the date on which the book was purchased
-	 * @param locationOfBook a String, the current location of the book.
-	 * @param personLoanedTo a String, the name of the person or entity to whom the book has been loaned
-	 * @param dateLoaned a Date, the date on which the book was loaned to personLoanedTo
-	 */
-	public BookObject(int bookISBN, String bookName, String bookAuthor,
-					  String ownerName, Date datePurchased, String locationOfBook, String personLoanedTo, Date dateLoaned)
-	{ //Begin constructor with 4 parameters
-		name = bookName;
-		author = bookAuthor;
-		isbn = bookISBN;
-		owner = ownerName;
-		purchaseDate = datePurchased;
-		location = locationOfBook;
-		loanedTo = personLoanedTo;
-		loanedToDate = dateLoaned;
-	} //End constructor with 4 parameters
-	
 	
 	
 	
 	//Getters for global variables
+	
+	
 	/**
 	 * Gets the name of the book
 	 * @return a String, the name of the book
@@ -307,7 +102,7 @@ public class BookObject
 	 * Gets the name of the name of the owner of the book.
 	 * @return a String, the name of the owner of the book
 	 */
-	public String getOwner() throws CustomException
+	public String getOwner()
 	{ //Begin getOwner
 			return owner;
 	} //End getOwner
@@ -316,7 +111,7 @@ public class BookObject
 	 * Gets the date on which the book was purchased.
 	 * @return a Date, the date on which the book was purchased
 	 */
-	public Date getPurchaseDate() throws CustomException
+	public java.util.Date getPurchaseDate()
 	{ //Begin getPurchaseDate
 			return purchaseDate;
 	} //End getPurchaseDate
@@ -343,7 +138,7 @@ public class BookObject
 	 * Gets the date on which a book was loaned.
 	 * @return a Date, the date on which the book was loaned
 	 */
-	public Date getDateLoaned()
+	public java.util.Date getDateLoaned()
 	{ //Begin getDateLoaned
 		return loanedToDate;
 	} //End getDateLoaned
@@ -357,9 +152,20 @@ public class BookObject
 		return timesRead;
 	} //End getNumTimesRead
 	
+	/**
+	 * Gets the date on which the book was loaned to the user from another person.
+	 * @return a Date, the date the book was loaned to the user from another person
+	 */
+	public java.util.Date getLoanedFromDate()
+	{ //Begin getLoanedFromDate
+		return loanedFromDate;
+	} //End getLoanedFromDate
+	
 	
 	
 	//Setters for global variables
+	
+	
 	/**
 	 * Sets the name of the book to the desired name
 	 * @param bookName a String, the desired name
@@ -440,4 +246,13 @@ public class BookObject
 	{ //Begin setNumTimesRead
 		timesRead = numTimesRead;
 	} //End setNumTimesRead
+	
+	/**
+	 * Set the date on which a book was loaned to the user from another person
+	 * @param dateLoanedFrom a Date, the date in question
+	 */
+	public void setDateLoanedFrom(Date dateLoanedFrom)
+	{ //Begin setDateLoanedFrom
+		loanedFromDate = dateLoanedFrom;
+	} //End setDateLoanedFrom
 } //End class
