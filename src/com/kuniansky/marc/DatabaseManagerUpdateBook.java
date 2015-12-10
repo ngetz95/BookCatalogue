@@ -382,7 +382,7 @@ public class DatabaseManagerUpdateBook
 	 * Updates the purchase date of the book in the date_info table.
 	 * @param desiredPurchaseDate the desired date on which the book was purchased.
 	 */
-	public void updateDateInfoPurchaseDate(Date desiredPurchaseDate)
+	public void updateDateInfoPurchaseDate(java.util.Date desiredPurchaseDate)
 	{ //Begin updateDateInfoPurchaseDate
 		
 		//Database URL
@@ -425,7 +425,7 @@ public class DatabaseManagerUpdateBook
 	 * Updates the date the book was loaned to in the date_info table
 	 * @param desiredLoanedToDate a Date, the date on which the book was loaned
 	 */
-	public void updateDateInfoLoanedToDate(Date desiredLoanedToDate)
+	public void updateDateInfoLoanedToDate(java.util.Date desiredLoanedToDate)
 	{ //Begin updateDateInfoLoanedToDate
 		//Database URL
 		Debug.println(url);
@@ -467,7 +467,7 @@ public class DatabaseManagerUpdateBook
 	 * Updates the date on which a book was loaned to another person by the user in the date_info table.
 	 * @param desiredLoanedFromDate a Date, the date on which the book was loaned by the user to another person.
 	 */
-	public void updateDateInfoLoanedFromDate(Date desiredLoanedFromDate)
+	public void updateDateInfoLoanedFromDate(java.util.Date desiredLoanedFromDate)
 	{ //Begin updateDateInfoLoanedFromDate
 		//Database URL
 		Debug.println(url);

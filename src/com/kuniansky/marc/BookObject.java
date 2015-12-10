@@ -37,17 +37,17 @@ public class BookObject
 	private int isbn;
 	//The owner of a book is the person who purchased it, and the purchase date is self explanatory
 	private String owner;
-	private Date purchaseDate;
+	private java.util.Date purchaseDate;
 	//The location of a book is its location. The owner can make this whatever they want
 	private String location;
 	//The loanedTo variable is the name of a person to which a book has been loaned
 	private String loanedTo;
 	//The loanedToDate is the date on which the book was loaned to the person loanedTo
-	private Date loanedToDate;
+	private java.util.Date loanedToDate;
 	//The number of times read is the number of times a book has been read
 	private int timesRead;
 	//The dateLoanedFrom is the date on which the current holder of a book was loaned it
-	private Date loanedFromDate;
+	private java.util.Date loanedFromDate;
 	
 	
 	//Constructor
@@ -111,7 +111,7 @@ public class BookObject
 	 * Gets the date on which the book was purchased.
 	 * @return a Date, the date on which the book was purchased
 	 */
-	public Date getPurchaseDate()
+	public java.util.Date getPurchaseDate()
 	{ //Begin getPurchaseDate
 			return purchaseDate;
 	} //End getPurchaseDate
@@ -138,7 +138,7 @@ public class BookObject
 	 * Gets the date on which a book was loaned.
 	 * @return a Date, the date on which the book was loaned
 	 */
-	public Date getDateLoaned()
+	public java.util.Date getDateLoaned()
 	{ //Begin getDateLoaned
 		return loanedToDate;
 	} //End getDateLoaned
@@ -156,7 +156,7 @@ public class BookObject
 	 * Gets the date on which the book was loaned to the user from another person.
 	 * @return a Date, the date the book was loaned to the user from another person
 	 */
-	public Date getLoanedFromDate()
+	public java.util.Date getLoanedFromDate()
 	{ //Begin getLoanedFromDate
 		return loanedFromDate;
 	} //End getLoanedFromDate

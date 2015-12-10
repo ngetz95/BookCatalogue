@@ -111,6 +111,7 @@ public class DatabaseManagerAddNewBook
 		    //Finally, insert to the loan_info table
 		    this.insertIntoLoanInfo(theBook);
 		    
+		    this.insertIntoDateInfo(theBook);
 		    //Tell the user that the insert was completed.
 		    System.out.println("Inserted records into the table.");
 
