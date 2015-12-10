@@ -10,19 +10,29 @@
  * 		the book being modified.
  * 		- Implemented the constructor, which takes 4 variables- theURL, userName, Password, and book. The constructor initializes
  * 		the global variables and does nothing else.
- * 		- Implemented the updateNameListName method, which uses PreparedStatements executes the SQL code to update the name of a book
+ * 		- Implemented the updateNameListName method, which uses PreparedStatements to execute the SQL code to update the name of a book
  * 		in the name_list table.
- * 		- Implemented the updateNameListAuthor method, which uses PreparedStatements executes the SQL code to update the author of
+ * 		- Implemented the updateNameListAuthor method, which uses PreparedStatements to execute the SQL code to update the author of
  * 		a book in the name_list table.
  * 		- Implemented the closeConnection method, which closes the connection when the 
  * 
+ * December 9, 2015 	Marc Kuniansky
+ * 		Modifications Made:
+ * 		- Implemented the updateBookInfoLocation method, which uses prepared statements to execute the SQL code to update the
+ * 		location of a book
  */
 package com.kuniansky.marc;
 
 import java.sql.*;
 
 /**
- * Contains methods necessary to update individual book objects held in the database
+ * Contains methods necessary to update individual books in the database. This is used only for updating existing items
+ * in the database, not for adding new books to the database.
+ * 
+ * When this class is constructed a connection is established with the database. This allows you to use multiple methods
+ * within this class under one connection, rather than establishing a connection for every method call. For security reasons,
+ * <strong> always close the connection using the <code>closeConnection</code> method</strong> when you have finished 
+ * your method calls.
  * @author Marc Kuniansky
  *
  */
@@ -109,14 +119,14 @@ public class DatabaseManagerUpdateBook
 	 * 
 	 * book_info
 	 * 		owner X
-	 * 		location
-	 * 		times_read
+	 * 		location X
+	 * 		times_read X
 	 * 
 	 * loan_info
-	 * 		loaned_to
+	 * 		loaned_to X
 	 * 
 	 * date_info
-	 * 		purchase_date
+	 * 		purchase_date X
 	 * 		loaned_to_date
 	 * 		loaned_from_date
 	 */
@@ -188,7 +198,7 @@ public class DatabaseManagerUpdateBook
 			//Build a Prepared Statement. These are really cool, they help prevent SQL injection by
 			//Pre-loading a statement. Each question mark needs to be made something, and count up 
 			//numerically left to right from 1. 
-			//?1=the name of the book, ?2=ISBN
+			//?1=the author of the book, ?2=ISBN
 			PreparedStatement statement = conn.prepareStatement
 											("UPDATE name_list"
 												+" SET author=?"
@@ -233,9 +243,9 @@ public class DatabaseManagerUpdateBook
 			//Build a Prepared Statement. These are really cool, they help prevent SQL injection by
 			//Pre-loading a statement. Each question mark needs to be made something, and count up 
 			//numerically left to right from 1. 
-			//?1=the name of the book, ?2=ISBN
+			//?1=the owner of the book, ?2=ISBN
 			PreparedStatement statement = conn.prepareStatement
-											("UPDATE nook_info"
+											("UPDATE book_info"
 												+" SET owner=?"
 												+" WHERE isbn=?");
 			
@@ -255,5 +265,213 @@ public class DatabaseManagerUpdateBook
 	} //End updateBookInfoOwner
 
 
+	/**
+	 * Updates the location of the book in the book_info table.
+	 * @param desiredLocation a String, the desired location.
+	 */
+	public void updateBookInfoLocation(String desiredLocation)
+	{ //Begin updateBookInfoLocation
+		//Database URL
+		Debug.println(url);
+		
+		//Get the needed information for updating the table
+		//First need the ISBN, to tell SQL which entry to update
+		int ISBN = theBook.getISBN();
 
+		try
+		{ //Begin try
+			//Debug line
+			Debug.println("Updating record in the table...");
+			//Build a Prepared Statement. These are really cool, they help prevent SQL injection by
+			//Pre-loading a statement. Each question mark needs to be made something, and count up 
+			//numerically left to right from 1. 
+			//?1=the location of the book, ?2=ISBN
+			PreparedStatement statement = conn.prepareStatement
+											("UPDATE book_info"
+												+" SET location=?"
+												+" WHERE isbn=?");
+			
+			//Set the fields in the prepared statement
+			statement.setString(1, desiredLocation);
+			statement.setInt(2, ISBN);
+	    
+			//Execute the SQL statement
+			statement.executeUpdate();
+			//Tell the user that the insert was completed.
+			System.out.println("Updated record in the name_list table.");
+		} //End try
+		catch(SQLException sq)
+		{ //Begin catch
+			sq.printStackTrace();
+		} //End catch
+	} //End updateBookInfoLocation
+	
+	/**
+	 * Updates the number of times a book has been read in the book_info table.
+	 * @param desiredTimesRead an int, the number of times read.
+	 */
+	public void updateBookInfoTimesRead(int desiredTimesRead)
+	{ //Begin updateBookInfoTimesRead
+		//Database URL
+		Debug.println(url);
+		
+		//Get the needed information for updating the table
+		//First need the ISBN, to tell SQL which entry to update
+		int ISBN = theBook.getISBN();
+
+		try
+		{ //Begin try
+			//Debug line
+			Debug.println("Updating record in the table...");
+			//Build a Prepared Statement. These are really cool, they help prevent SQL injection by
+			//Pre-loading a statement. Each question mark needs to be made something, and count up 
+			//numerically left to right from 1. 
+			//?1=the number of times the book has been read, ?2=ISBN
+			PreparedStatement statement = conn.prepareStatement
+											("UPDATE book_info"
+												+" SET times_read=?"
+												+" WHERE isbn=?");
+			
+			//Set the fields in the prepared statement
+			statement.setInt(1, desiredTimesRead);
+			statement.setInt(2, ISBN);
+	    
+			//Execute the SQL statement
+			statement.executeUpdate();
+			//Tell the user that the insert was completed.
+			System.out.println("Updated record in the name_list table.");
+		} //End try
+		catch(SQLException sq)
+		{ //Begin catch
+			sq.printStackTrace();
+		} //End catch
+	} //End updateBookInfoTimesRead
+	
+	
+	//Updaters for the loan_info table
+	
+	/**
+	 * Updates the person to whom the book was loaned in the loan_info table.
+	 * @param desiredLoanedTo a String, the desired name of the person to whom the book was loaned.
+	 */
+	public void updateLoanInfoLoanedTo(String desiredLoanedTo)
+	{ //Begin updateLoanInfoLoanedTo
+		//Database URL
+		Debug.println(url);
+		
+		//Get the needed information for updating the table
+		//First need the ISBN, to tell SQL which entry to update
+		int ISBN = theBook.getISBN();
+
+		try
+		{ //Begin try
+			//Debug line
+			Debug.println("Updating record in the table...");
+			//Build a Prepared Statement. These are really cool, they help prevent SQL injection by
+			//Pre-loading a statement. Each question mark needs to be made something, and count up 
+			//numerically left to right from 1. 
+			//?1=the name of the person to whom the book was loaned, ?2=ISBN
+			PreparedStatement statement = conn.prepareStatement
+											("UPDATE loan_info"
+												+" SET loaned_to=?"
+												+" WHERE isbn=?");
+			
+			//Set the fields in the prepared statement
+			statement.setString(1, desiredLoanedTo);
+			statement.setInt(2, ISBN);
+	    
+			//Execute the SQL statement
+			statement.executeUpdate();
+			//Tell the user that the insert was completed.
+			System.out.println("Updated record in the name_list table.");
+		} //End try
+		catch(SQLException sq)
+		{ //Begin catch
+			sq.printStackTrace();
+		} //End catch
+	} //End updateLoanInfoLoanedTo
+	
+	
+	//Updaters for the date_info table
+	
+	
+	/**
+	 * Updates the purchase date of the book in the date_info table.
+	 * @param desiredPurchaseDate the desired date on which the book was purchased.
+	 */
+	public void updateDateInfoPurchaseDate(Date desiredPurchaseDate)
+	{ //Begin updateDateInfoPurchaseDate
+		
+		//Database URL
+		Debug.println(url);
+		
+		//Get the needed information for updating the table
+		//First need the ISBN, to tell SQL which entry to update
+		int ISBN = theBook.getISBN();
+
+		try
+		{ //Begin try
+			//Debug line
+			Debug.println("Updating record in the table...");
+			//Build a Prepared Statement. These are really cool, they help prevent SQL injection by
+			//Pre-loading a statement. Each question mark needs to be made something, and count up 
+			//numerically left to right from 1. 
+			//?1=the new purchase date of the book, ?2=ISBN
+			PreparedStatement statement = conn.prepareStatement
+											("UPDATE date_info"
+												+" SET purchase_date=?"
+												+" WHERE isbn=?");
+			java.sql.Date sqlDate = new java.sql.Date(desiredPurchaseDate.getTime());
+			//Set the fields in the prepared statement
+			statement.setDate(1, sqlDate);
+			statement.setInt(2, ISBN);
+	    
+			//Execute the SQL statement
+			statement.executeUpdate();
+			//Tell the user that the insert was completed.
+			System.out.println("Updated record in the name_list table.");
+		} //End try
+		catch(SQLException sq)
+		{ //Begin catch
+			sq.printStackTrace();
+		} //End catch
+	} //End updateDateInfoPurchaseDate
+
+	
+	public void updateDateInfoLoanedToDate(Date desiredLoanedToDate)
+	{ //Begin updateDateInfoLoanedToDate
+		//Database URL
+		Debug.println(url);
+		
+		//Get the needed information for updating the table
+		//First need the ISBN, to tell SQL which entry to update
+		int ISBN = theBook.getISBN();
+
+		try
+		{ //Begin try
+			//Debug line
+			Debug.println("Updating record in the table...");
+			//Build a Prepared Statement. These are really cool, they help prevent SQL injection by
+			//Pre-loading a statement. Each question mark needs to be made something, and count up 
+			//numerically left to right from 1. 
+			//?1=the new purchase date of the book, ?2=ISBN
+			PreparedStatement statement = conn.prepareStatement
+											("UPDATE date_info"
+												+" SET purchase_date=?"
+												+" WHERE isbn=?");
+			java.sql.Date sqlDate = new java.sql.Date(desiredLoanedToDate.getTime());
+			//Set the fields in the prepared statement
+			statement.setDate(1, sqlDate);
+			statement.setInt(2, ISBN);
+	    
+			//Execute the SQL statement
+			statement.executeUpdate();
+			//Tell the user that the insert was completed.
+			System.out.println("Updated record in the name_list table.");
+		} //End try
+		catch(SQLException sq)
+		{ //Begin catch
+			sq.printStackTrace();
+		} //End catch
+	} //End updateDateInfoLoanedToDate
 } //End class

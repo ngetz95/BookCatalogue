@@ -326,7 +326,7 @@ public class DatabaseManagerAddNewBook
 			java.util.Date dateLoanedTo = theBook.getDateLoaned();
 			java.util.Date dateLoanedFrom = theBook.getLoanedFromDate();
 			
-			//Populate the statement with nescessary information
+			//Populate the statement with necessary information
 			statement.setInt(1, isbn);
 			//Because date objects are weird, we have to do this one conditionally. Null Dates cannot be
 			//converted, that's why this is important.

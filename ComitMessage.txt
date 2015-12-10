@@ -1,0 +1,17 @@
+Created the DatabaseManagerUpdateBook class
+	- Implemented the class. Gave it 5 global variables: url to store the URL of the database, user to store the username for 
+	database access, pass to store the password for database access, conn to store the connection status, and theBook to store
+	the book being modified.
+	- Implemented the constructor, which takes 4 variables- theURL, userName, Password, and book. The constructor initializes
+	the global variables and does nothing else.
+	- Implemented the updateNameListName method, which uses PreparedStatements executes the SQL code to update the name of a book
+	in the name_list table.
+	- Implemented the updateNameListAuthor method, which uses PreparedStatements executes the SQL code to update the author of
+	a book in the name_list table.
+	- Implemented the closeConnection method, which closes the connection when the 
+
+ Modified the DatabaseManagerAddNewBook class
+	-Created a new variable, DB_URL, to standardize the URL being used for each instance
+	of the class. Instantiated the variable in the constructor and utilize it in the 
+	dbInsertOneBook and dbInseryManyBooks methods. Removed the local variable DB_URL
+	from the two methods mentioned.

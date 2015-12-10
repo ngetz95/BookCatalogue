@@ -44,9 +44,9 @@ public class BookProgramWorker
 	 */
 	private void methodTester()
 	{ //Begin methodTester
-		BookObject testBook = new BookObject("Name", "Author", 3214, "Marc");
-		BookObject testBook2 = new BookObject("TestName", "Noone Wrote This", 45679, "Marc");
-		BookObject testBook3 = new BookObject ("Fuck this book", "Who cares about it?", 7891985, "Marc");
+		BookObject testBook = new BookObject(98765, "Name", "Author");
+		BookObject testBook2 = new BookObject(45678, "TestName", "Noone Wrote This");
+		BookObject testBook3 = new BookObject (12345, "Fuck this book", "Who cares about it?");
 		
 		//DatabaseManagerAddNewBook dbman = new DatabaseManagerAddNewBook
 											//("localhost/books_database", "root", "");
